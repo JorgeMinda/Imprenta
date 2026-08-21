@@ -1,0 +1,107 @@
+// Wasp inyecta automáticamente los bloques datasource y generator.
+// Solo declaramos el modelo de dominio contable (Ecuador / SRI).
+
+enum UserRole {
+  ADMIN
+  CONTADOR
+  LECTOR
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      UserRole @default(CONTADOR)
+  createdAt DateTime @default(now())
+}
+
+enum AccountType {
+  ACTIVO
+  PASIVO
+  PATRIMONIO
+  INGRESO
+  GASTO
+  COSTOS
+}
+
+enum NaturalSign {
+  DEUDORA
+  ACREEDORA
+}
+
+enum EntryStatus {
+  POSTED
+  REVERSED
+}
+
+enum SourceType {
+  FACTURA_VENTA
+  FACTURA_COMPRA
+  RETENCION
+  NOTA_CREDITO
+  NOTA_DEBITO
+  DIARIO_GENERAL
+  AJUSTE
+}
+
+model Account {
+  id          String       @id @default(uuid())
+  code        String       @unique // "1.1.01.01" (catálogo SRI)
+  name        String
+  type        AccountType
+  naturalSign NaturalSign
+  parentId    String?      @map("parent_id")
+  isDetail    Boolean      @default(true)
+  active      Boolean      @default(true)
+  parent      Account?     @relation("AccountTree", fields: [parentId], references: [id])
+  children    Account[]    @relation("AccountTree")
+  lines       JournalLine[]
+
+  @@index([parentId])
+  @@map("accounts")
+}
+
+model FiscalPeriod {
+  id        String         @id @default(uuid())
+  label     String         // "2026-01"
+  startDate DateTime       @map("start_date")
+  endDate   DateTime       @map("end_date")
+  closed    Boolean        @default(false)
+  entries   JournalEntry[]
+
+  @@map("fiscal_periods")
+}
+
+model JournalEntry {
+  id         String      @id @default(uuid())
+  date       DateTime    @db.Date
+  concept    String
+  reference  String?
+  sourceType SourceType
+  periodId   String      @map("period_id")
+  status     EntryStatus @default(POSTED)
+  createdBy  String      @map("created_by")
+  createdAt  DateTime    @default(now())
+  period     FiscalPeriod @relation(fields: [periodId], references: [id])
+  lines      JournalLine[]
+
+  @@index([date])
+  @@index([periodId])
+  @@map("journal_entries")
+}
+
+model JournalLine {
+  id          String       @id @default(uuid())
+  entryId     String       @map("entry_id")
+  accountId   String       @map("account_id")
+  debitCents  BigInt       @map("debit_cents")
+  creditCents BigInt       @map("credit_cents")
+  description String?
+  entry       JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  account     Account      @relation(fields: [accountId], references: [id])
+
+  @@index([accountId])
+  @@index([entryId])
+  @@map("journal_lines")
+}

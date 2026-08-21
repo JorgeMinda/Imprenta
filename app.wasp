@@ -1,0 +1,33 @@
+app contabilidadSri {
+  wasp: {
+    version: "0.25.0"
+  },
+
+  title: "Motor Contable SRI (Ecuador)",
+
+  db: {
+    system: PostgreSQL
+  },
+
+  auth: {
+    userEntity: User,
+    methods: {
+      email: {}
+    },
+    onAuthFailedRedirectTo: "/login"
+  },
+
+  emailSender: {
+    provider: Dummy {}
+  }
+}
+
+query getAccounts {
+  fn: import { getAccounts } from "@src/operations/accounts.js",
+  entities: [Account]
+}
+
+action createJournalEntry {
+  fn: import { createJournalEntry } from "@src/operations/journal.js",
+  entities: [JournalEntry, JournalLine, Account]
+}
