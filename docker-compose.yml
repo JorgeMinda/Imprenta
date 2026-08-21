@@ -20,16 +20,14 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-      # Evita mezclar node_modules/.wasp del contenedor con el host.
       - /app/node_modules
       - /app/.wasp
     environment:
-      # Wasp prioriza DATABASE_URL de .env.server, pero lo duplicamos por seguridad.
       DATABASE_URL: postgresql://postgres:postgres@db:5432/contabilidad
       JWT_SECRET: dev-secret-change-me
     ports:
-      - "3000:3000" # cliente (Vite)
-      - "3001:3001" # servidor API
+      - "3000:3000" # Client
+      - "3001:3001" # Server
     depends_on:
       db:
         condition: service_healthy
