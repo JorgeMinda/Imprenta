@@ -1,16 +1,17 @@
 # Imagen de desarrollo para el Motor Contable SRI.
-# Wasp >= 0.22 exige Node >= 22.22.2.
-FROM node:22-bookworm
+# Wasp >= 0.22 requiere Node >= 22.22.2 (tú tienes 22.23.2, OK).
+# Pero Wasp 0.25.0 exige Node >= 24.22.2. Por usamos Node 24.
+FROM node:24-bookworm
 
-# CLI de Wasp, fijado a la misma versión que app.wasp (wasp.version).
+# Instalar el CLI de Wasp, fijado a la versión que usa tu app.wasp (0.25.0).
 RUN npm install -g @wasp.sh/wasp-cli@0.25.0
 
 WORKDIR /app
 
-# Puerto del cliente (Vite) y del servidor API.
+# Puertos del cliente (Vite) y del servidor API.
 EXPOSE 3000 3001
 
-# Por defecto levanta el servidor de desarrollo.
+# Comando por defecto: levantar el servidor de desarrollo.
 # Para migraciones/tests se sobreescribe el command en docker compose o con:
 #   docker compose run --rm wasp wasp db migrate-dev
 #   docker compose run --rm wasp wasp test
