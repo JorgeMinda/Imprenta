@@ -6,11 +6,8 @@ services:
     buildCommand: wasp build
     startCommand: node node/server.js
     
-    # --- ¡OJO! Para usar Node 24 (requerido por Wasp 0.25.0) ---
-    # Render trae Node 22 por defecto. Para forzarlo:
-    # 1. Crea un archivo .nvmrc en la raíz con el contenido: "24.14.1"
-    # 2. Render lo leerá automáticamente al hacer build.
-    # Si no quieres usar .nvmrc, selecciónalo manualmente en el panel de Render (Versión 24).
+    # Comentarios eliminados para evitar problemas de parsing en Render.
+    # La versión de Node 24 se gestiona con el Paso 3.
 
 databases:
   - name: imprenta-db
