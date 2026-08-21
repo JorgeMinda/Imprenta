@@ -16,7 +16,7 @@ services:
     env: node
     plan: free
     branch: main
-    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; wasp build'
+    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; P=$(find . -maxdepth 3 -name app.wasp | head -1); echo "WASP PROJECT FILE: $P"; cd "$(dirname "$P")"; wasp build'
     # Migraciones + arranque (preDeployCommand no existe en free tier).
     startCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; cd .wasp/build/server && npx prisma migrate deploy; node server.js'
     healthCheckPath: /
@@ -37,7 +37,7 @@ services:
     name: imprenta-contable-client
     env: static
     branch: main
-    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; wasp build'
+    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; P=$(find . -maxdepth 3 -name app.wasp | head -1); echo "WASP PROJECT FILE: $P"; cd "$(dirname "$P")"; wasp build'
     staticPublishPath: .wasp/build/web-app
     envVars:
       - key: NODE_VERSION
