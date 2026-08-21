@@ -9,11 +9,6 @@
 #   - Free tier NO soporta fromService.property=url -> se fijan las URLs *.onrender.com (deterministas por nombre de servicio).
 # ⚠️ DB Free Tier expira a los 30 días: upgrade a $7/mes o migrar DATABASE_URL a Neon/Supabase.
 
-databases:
-  - name: imprenta-db
-    databaseName: contabilidad
-    plan: free
-
 services:
   # ── API / Servidor Wasp ──────────────────────────────────────────────
   - type: web
@@ -29,9 +24,7 @@ services:
       - key: NODE_VERSION
         value: "24.14.1"
       - key: DATABASE_URL
-        fromDatabase:
-          name: imprenta-db
-          property: connectionString
+        value: "postgresql://doctoria_db_user:IBGdx5cDgyzdT4JqxA3CYHlC2AGK1jdj@dpg-d9utd4favr4c73bg8otg-a.oregon-postgres.render.com/doctoria_db?sslmode=require"
       - key: JWT_SECRET
         generateValue: true
       - key: WASP_SERVER_URL
