@@ -2,8 +2,8 @@
 # Estrategia: Render Blueprints (IaC), Wasp 0.25.0 en Native Node (sin Dockerfile mantenido a mano).
 # Notas:
 #   - Wasp separa server (API) y web-app (cliente estático) -> 2 servicios web + 1 DB.
-#   - Wasp CLI se instala con el installer oficial (no `npm -g`) para evitar el error
-#     `ENOENT ... /usr/lib/node_modules/@wasp.sh` de Render Free.
+#   - Wasp 0.21+ se instala vía npm con prefix escribible (~/.npm-global) para evitar
+#     el `ENOENT ... /usr/lib/node_modules` que da el install global por defecto en Render.
 #   - Node 24.14.1 es obligatorio para Wasp 0.25.0 (ver .nvmrc).
 #   - Free tier NO soporta preDeployCommand -> las migraciones corren dentro de startCommand.
 #   - Free tier NO soporta fromService.property=url -> se fijan las URLs *.onrender.com (deterministas por nombre de servicio).
@@ -16,7 +16,7 @@ services:
     env: node
     plan: free
     branch: main
-    buildCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; curl -sSL https://get.wasp.sh/installer.sh | sh -s -- -v 0.25.0; wasp build'
+    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; wasp build'
     # Migraciones + arranque (preDeployCommand no existe en free tier).
     startCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; cd .wasp/build/server && npx prisma migrate deploy; node server.js'
     healthCheckPath: /
@@ -37,7 +37,7 @@ services:
     name: imprenta-contable-client
     env: static
     branch: main
-    buildCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; curl -sSL https://get.wasp.sh/installer.sh | sh -s -- -v 0.25.0; wasp build'
+    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; wasp build'
     staticPublishPath: .wasp/build/web-app
     envVars:
       - key: NODE_VERSION
