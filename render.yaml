@@ -1,15 +1,62 @@
-services:
-  - type: web
-    name: imprenta-contable-sri
-    env: node
-    plan: free
-    buildCommand: wasp build
-    startCommand: node node/server.js
-    
-    # Comentarios eliminados para evitar problemas de parsing en Render.
-    # La versión de Node 24 se gestiona con el Paso 3.
+# Render Blueprint — Motor Contable SRI (Ecuador)
+# Estrategia: Render Blueprints (IaC), Wasp 0.25.0 en Native Node (sin Dockerfile mantenido a mano).
+# Notas de arquitectura:
+#   - Wasp separa server (API) y web-app (cliente estático). Por eso hay 2 servicios web + 1 DB.
+#   - Wasp CLI se instala con el installer oficial (no `npm -g`), evitando el error
+#     `ENOENT ... /usr/lib/node_modules/@wasp.sh` que daba Render Free.
+#   - Node 24.14.1 es obligatorio para Wasp 0.25.0 (ver .nvmrc).
+# ⚠️ DB Free Tier expira a los 30 días: programar upgrade a $7/mes o migrar DATABASE_URL a Neon/Supabase.
 
 databases:
   - name: imprenta-db
-    type: postgresql
+    databaseName: contabilidad
     plan: free
+
+services:
+  # ── API / Servidor Wasp ──────────────────────────────────────────────
+  - type: web
+    name: imprenta-contable-server
+    env: node
+    plan: free
+    branch: main
+    buildCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; curl -sSL https://get.wasp.sh/installer.sh | sh; wasp build'
+    # Aplica migraciones antes de arrancar (idempotente con `prisma migrate deploy`).
+    preDeployCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; cd .wasp/build/server && npx prisma migrate deploy'
+    startCommand: node .wasp/build/server/server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "24.14.1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: imprenta-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: WASP_SERVER_URL
+        fromService:
+          type: web
+          name: imprenta-contable-server
+          property: url
+      - key: WASP_WEB_CLIENT_URL
+        fromService:
+          type: web
+          name: imprenta-contable-client
+          property: url
+
+  # ── Cliente (React/Vite estático) ────────────────────────────────────
+  - type: web
+    name: imprenta-contable-client
+    env: static
+    plan: free
+    branch: main
+    buildCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; curl -sSL https://get.wasp.sh/installer.sh | sh; wasp build'
+    staticPublishPath: .wasp/build/web-app
+    envVars:
+      - key: NODE_VERSION
+        value: "24.14.1"
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: imprenta-contable-server
+          property: url

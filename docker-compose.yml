@@ -24,10 +24,10 @@ services:
       - /app/.wasp
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/contabilidad
-      JWT_SECRET: dev-secret-change-me
+      JWT_SECRET: cambio_este_texto_por_otro_aleatorio
     ports:
-      - "3000:3000" # Client
-      - "3001:3001" # Server
+      - "3000:3000" # Cliente (Vite)
+      - "3001:3001" # Servidor Wasp
     depends_on:
       db:
         condition: service_healthy
