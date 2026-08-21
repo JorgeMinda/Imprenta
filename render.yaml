@@ -1,11 +1,13 @@
 # Render Blueprint — Motor Contable SRI (Ecuador)
 # Estrategia: Render Blueprints (IaC), Wasp 0.25.0 en Native Node (sin Dockerfile mantenido a mano).
-# Notas de arquitectura:
-#   - Wasp separa server (API) y web-app (cliente estático). Por eso hay 2 servicios web + 1 DB.
-#   - Wasp CLI se instala con el installer oficial (no `npm -g`), evitando el error
-#     `ENOENT ... /usr/lib/node_modules/@wasp.sh` que daba Render Free.
+# Notas:
+#   - Wasp separa server (API) y web-app (cliente estático) -> 2 servicios web + 1 DB.
+#   - Wasp CLI se instala con el installer oficial (no `npm -g`) para evitar el error
+#     `ENOENT ... /usr/lib/node_modules/@wasp.sh` de Render Free.
 #   - Node 24.14.1 es obligatorio para Wasp 0.25.0 (ver .nvmrc).
-# ⚠️ DB Free Tier expira a los 30 días: programar upgrade a $7/mes o migrar DATABASE_URL a Neon/Supabase.
+#   - Free tier NO soporta preDeployCommand -> las migraciones corren dentro de startCommand.
+#   - Free tier NO soporta fromService.property=url -> se fijan las URLs *.onrender.com (deterministas por nombre de servicio).
+# ⚠️ DB Free Tier expira a los 30 días: upgrade a $7/mes o migrar DATABASE_URL a Neon/Supabase.
 
 databases:
   - name: imprenta-db
@@ -20,9 +22,8 @@ services:
     plan: free
     branch: main
     buildCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; curl -sSL https://get.wasp.sh/installer.sh | sh; wasp build'
-    # Aplica migraciones antes de arrancar (idempotente con `prisma migrate deploy`).
-    preDeployCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; cd .wasp/build/server && npx prisma migrate deploy'
-    startCommand: node .wasp/build/server/server.js
+    # Migraciones + arranque (preDeployCommand no existe en free tier).
+    startCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; cd .wasp/build/server && npx prisma migrate deploy; node server.js'
     healthCheckPath: /
     envVars:
       - key: NODE_VERSION
@@ -34,15 +35,9 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: WASP_SERVER_URL
-        fromService:
-          type: web
-          name: imprenta-contable-server
-          property: url
+        value: "https://imprenta-contable-server.onrender.com"
       - key: WASP_WEB_CLIENT_URL
-        fromService:
-          type: web
-          name: imprenta-contable-client
-          property: url
+        value: "https://imprenta-contable-client.onrender.com"
 
   # ── Cliente (React/Vite estático) ────────────────────────────────────
   - type: web
@@ -56,7 +51,4 @@ services:
       - key: NODE_VERSION
         value: "24.14.1"
       - key: REACT_APP_API_URL
-        fromService:
-          type: web
-          name: imprenta-contable-server
-          property: url
+        value: "https://imprenta-contable-server.onrender.com"
