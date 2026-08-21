@@ -16,9 +16,9 @@ services:
     env: node
     plan: free
     branch: main
-    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; cd "$(git rev-parse --show-toplevel)"; wasp build'
+    buildCommand: bash build.sh
     # Migraciones + arranque (preDeployCommand no existe en free tier).
-    startCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; cd .wasp/build/server && npx prisma migrate deploy; node server.js'
+    startCommand: bash server-start.sh
     healthCheckPath: /
     envVars:
       - key: NODE_VERSION
@@ -37,7 +37,7 @@ services:
     name: imprenta-contable-client
     env: static
     branch: main
-    buildCommand: bash -c 'export PATH="$HOME/.npm-global/bin:$PATH"; npm config set prefix ~/.npm-global >/dev/null 2>&1; npm install -g @wasp.sh/wasp-cli@0.25.0; cd "$(git rev-parse --show-toplevel)"; wasp build'
+    buildCommand: bash build.sh
     staticPublishPath: .wasp/build/web-app
     envVars:
       - key: NODE_VERSION
