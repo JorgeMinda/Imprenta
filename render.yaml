@@ -43,7 +43,6 @@ services:
   - type: web
     name: imprenta-contable-client
     env: static
-    plan: free
     branch: main
     buildCommand: bash -c 'export PATH="$HOME/.local/bin:$PATH"; curl -sSL https://get.wasp.sh/installer.sh | sh; wasp build'
     staticPublishPath: .wasp/build/web-app
