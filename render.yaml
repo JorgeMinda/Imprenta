@@ -10,7 +10,7 @@
 services:
   # ── API / Servidor Wasp ──────────────────────────────────────────────
   - type: web
-    name: doctoria-server
+    name: imprenta-server
     env: node
     plan: free
     branch: main
@@ -25,13 +25,13 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: WASP_SERVER_URL
-        value: "https://doctoria-server.onrender.com"
+        value: "https://imprenta-server.onrender.com"
       - key: WASP_WEB_CLIENT_URL
-        value: "https://doctoria-client.onrender.com"
+        value: "https://imprenta-client.onrender.com"
 
   # ── Cliente (React/Vite estático) ────────────────────────────────────
   - type: web
-    name: doctoria-client
+    name: imprenta-client
     env: static
     branch: main
     buildCommand: bash build.sh
@@ -40,4 +40,4 @@ services:
       - key: NODE_VERSION
         value: "24.14.1"
       - key: REACT_APP_API_URL
-        value: "https://doctoria-server.onrender.com"
+        value: "https://imprenta-server.onrender.com"
