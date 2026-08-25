@@ -24,9 +24,9 @@ services:
       - key: NODE_VERSION
         value: "24.14.1"
       - key: DATABASE_URL
-        value: "postgresql://doctoria_db_user:IBGdx5cDgyzdT4JqxA3CYHlC2AGK1jdj@dpg-d9utd4favr4c73bg8otg-a.oregon-postgres.render.com/doctoria_db?sslmode=require"
+        sync: false
       - key: JWT_SECRET
-        generateValue: true
+        sync: false
       - key: WASP_SERVER_URL
         value: "https://imprenta-contable-server.onrender.com"
       - key: WASP_WEB_CLIENT_URL
