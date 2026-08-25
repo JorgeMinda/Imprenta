@@ -1,23 +1,20 @@
 # Render Blueprint — Motor Contable SRI (Ecuador)
-# Estrategia: Render Blueprints (IaC), Wasp 0.25.0 en Native Node (sin Dockerfile mantenido a mano).
+# Wasp 0.25.0 + Prisma + Supabase Postgres. Despliegue 100% en Render (sin Docker).
+# Servicios: 1 API (web) + 1 cliente estático. DB externa = Supabase (sin service de DB en Render).
 # Notas:
-#   - Wasp separa server (API) y web-app (cliente estático) -> 2 servicios web + 1 DB.
-#   - Wasp 0.21+ se instala vía npm con prefix escribible (~/.npm-global) para evitar
-#     el `ENOENT ... /usr/lib/node_modules` que da el install global por defecto en Render.
-#   - Node 24.14.1 es obligatorio para Wasp 0.25.0 (ver .nvmrc).
-#   - Free tier NO soporta preDeployCommand -> las migraciones corren dentro de startCommand.
-#   - Free tier NO soporta fromService.property=url -> se fijan las URLs *.onrender.com (deterministas por nombre de servicio).
-# ⚠️ DB Free Tier expira a los 30 días: upgrade a $7/mes o migrar DATABASE_URL a Neon/Supabase.
+#   - Wasp 0.25.0 requiere main.wasp y Node 24.14.1.
+#   - Free tier NO soporta preDeployCommand -> migraciones corren en startCommand (server-start.sh).
+#   - DATABASE_URL/JWT_SECRET en sync:false -> se agregan manualmente en el dashboard (no van al repo).
+#   - Wasp build genera los estáticos del cliente en .wasp/build/web-app/build.
 
 services:
   # ── API / Servidor Wasp ──────────────────────────────────────────────
   - type: web
-    name: imprenta-contable-server
+    name: doctoria-server
     env: node
     plan: free
     branch: main
     buildCommand: bash build.sh
-    # Migraciones + arranque (preDeployCommand no existe en free tier).
     startCommand: bash server-start.sh
     healthCheckPath: /
     envVars:
@@ -28,13 +25,13 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: WASP_SERVER_URL
-        value: "https://imprenta-contable-server.onrender.com"
+        value: "https://doctoria-server.onrender.com"
       - key: WASP_WEB_CLIENT_URL
-        value: "https://imprenta-contable-client.onrender.com"
+        value: "https://doctoria-client.onrender.com"
 
   # ── Cliente (React/Vite estático) ────────────────────────────────────
   - type: web
-    name: imprenta-contable-client
+    name: doctoria-client
     env: static
     branch: main
     buildCommand: bash build.sh
@@ -43,4 +40,4 @@ services:
       - key: NODE_VERSION
         value: "24.14.1"
       - key: REACT_APP_API_URL
-        value: "https://imprenta-contable-server.onrender.com"
+        value: "https://doctoria-server.onrender.com"
