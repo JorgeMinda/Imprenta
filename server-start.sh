@@ -8,5 +8,7 @@ else
 fi
 cd "$SRV"
 npm install
-npx prisma migrate deploy
+# No migrations are committed yet, so bootstrap the schema directly.
+# (Once you adopt Prisma migrations, switch this back to `npx prisma migrate deploy`.)
+npx prisma db push --accept-data-loss
 node server.js
