@@ -38,7 +38,7 @@ services:
     env: static
     branch: main
     buildCommand: bash build.sh
-    staticPublishPath: .wasp/build/web-app
+    staticPublishPath: .wasp/build/web-app/build
     envVars:
       - key: NODE_VERSION
         value: "24.14.1"

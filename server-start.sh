@@ -7,5 +7,6 @@ else
   SRV="$ROOT/.wasp/out/server"
 fi
 cd "$SRV"
+npm install
 npx prisma migrate deploy
 node server.js
