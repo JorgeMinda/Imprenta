@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
-ROOT="$(git rev-parse --show-toplevel)"
-if [ -d "$ROOT/.wasp/build/server" ]; then
-  SRV="$ROOT/.wasp/build/server"
+cd "$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+if [ -d ".wasp/build/server" ]; then
+  SRV=".wasp/build/server"
 else
-  SRV="$ROOT/.wasp/out/server"
+  SRV=".wasp/out/server"
 fi
 cd "$SRV"
 npm install
