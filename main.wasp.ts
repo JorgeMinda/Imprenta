@@ -7,20 +7,12 @@ export default app({
   wasp: { version: "0.25.0" },
   title: "Motor Contable SRI (Ecuador)",
 
-  db: {
-    system: "PostgreSQL",
-  },
-
   auth: {
     userEntity: "User",
     methods: {
-      email: {},
+      usernameAndPassword: {},
     },
     onAuthFailedRedirectTo: "/login",
-  },
-
-  emailSender: {
-    provider: "Dummy",
   },
 
   spec: [
