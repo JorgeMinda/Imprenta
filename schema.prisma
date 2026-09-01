@@ -1,5 +1,11 @@
-// Wasp inyecta automáticamente los bloques datasource y generator.
-// Solo declaramos el modelo de dominio contable (Ecuador / SRI).
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
 
 enum UserRole {
   ADMIN
