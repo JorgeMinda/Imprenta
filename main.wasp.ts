@@ -1,4 +1,5 @@
-import { app, query, action } from "@wasp.sh/spec";
+import { app, query, action, route, page } from "@wasp.sh/spec";
+import { MainPage } from "./src/MainPage" with { type: "ref" };
 import { getAccounts } from "./src/operations/accounts" with { type: "ref" };
 import { createJournalEntry } from "./src/operations/journal" with { type: "ref" };
 
@@ -12,10 +13,11 @@ export default app({
     methods: {
       usernameAndPassword: {},
     },
-    onAuthFailedRedirectTo: "/login",
+    onAuthFailedRedirectTo: "/",
   },
 
   spec: [
+    route("RootRoute", "/", page(MainPage)),
     query(getAccounts, {
       entities: ["Account"],
     }),
