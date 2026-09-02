@@ -7,28 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// ── Auth (Wasp + Supabase) ──────────────────────────────────────────
-
-model Auth {
-  id           String    @id @default(uuid())
-  email        String?   @unique
-  username     String?   @unique
-  password     String?
-  userId       String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  userId    String
-  expiresIn Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 // ── App Models ───────────────────────────────────────────────────────
 
 enum UserRole {
@@ -44,8 +22,6 @@ model User {
   name      String?
   role      UserRole @default(CONTADOR)
   createdAt DateTime @default(now())
-  auth      Auth?
-  sessions  Session[]
 }
 
 enum AccountType {

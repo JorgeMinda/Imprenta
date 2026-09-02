@@ -14,30 +14,6 @@ CREATE TYPE "EntryStatus" AS ENUM ('POSTED', 'REVERSED');
 CREATE TYPE "SourceType" AS ENUM ('FACTURA_VENTA', 'FACTURA_COMPRA', 'RETENCION', 'NOTA_CREDITO', 'NOTA_DEBITO', 'DIARIO_GENERAL', 'AJUSTE');
 
 -- CreateTable
-CREATE TABLE "auth" (
-    "id" TEXT NOT NULL,
-    "email" TEXT,
-    "username" TEXT,
-    "password" TEXT,
-    "userId" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "auth_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Session" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "expiresIn" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -102,12 +78,6 @@ CREATE TABLE "journal_lines" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "auth_email_key" ON "auth"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "auth_username_key" ON "auth"("username");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
@@ -127,12 +97,6 @@ CREATE INDEX "journal_lines_account_id_idx" ON "journal_lines"("account_id");
 
 -- CreateIndex
 CREATE INDEX "journal_lines_entry_id_idx" ON "journal_lines"("entry_id");
-
--- AddForeignKey
-ALTER TABLE "auth" ADD CONSTRAINT "auth_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "accounts"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
