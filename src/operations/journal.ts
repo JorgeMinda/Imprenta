@@ -1,3 +1,13 @@
+import { CreateJournalEntry } from '../accounting/application/use-cases/CreateJournalEntry';
+import { PrismaJournalRepository } from '../accounting/infrastructure/prisma/repositories/PrismaJournalRepository';
+import { JournalEntryDraft } from '../accounting/domain/entities/JournalEntry';
+
+export const createJournalEntry = async (args: JournalEntryDraft, context: any) => {
+  const repository = new PrismaJournalRepository(context.entities.JournalEntry);
+  const useCase = new CreateJournalEntry(repository);
+  return useCase.execute(args);
+};
+
 export const getJournalEntries = async (args: { periodId?: string }, context: any) => {
   const where: any = {};
   if (args.periodId) {

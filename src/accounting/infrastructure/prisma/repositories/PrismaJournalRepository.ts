@@ -1,5 +1,5 @@
-import { JournalRepository } from '@src/accounting/domain/repositories/JournalRepository';
-import { JournalEntryDraft } from '@src/accounting/domain/entities/JournalEntry';
+import { JournalRepository } from '../../../domain/repositories/JournalRepository';
+import { JournalEntryDraft } from '../../../domain/entities/JournalEntry';
 
 export class PrismaJournalRepository implements JournalRepository {
   constructor(private readonly delegate: any) {}
