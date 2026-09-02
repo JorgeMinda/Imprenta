@@ -1,25 +1,27 @@
 # Render Blueprint — Motor Contable SRI (Ecuador)
-# Wasp 0.25.0 + Prisma + Supabase Postgres. Despliegue 100% en Render (sin Docker).
-# Servicios: 1 API (web) + 1 cliente estático. DB externa = Supabase (sin service de DB en Render).
-# Notas:
-#   - Wasp 0.25.0 requiere main.wasp y Node 24.14.1.
-#   - Free tier NO soporta preDeployCommand -> migraciones corren en startCommand (server-start.sh).
-#   - DATABASE_URL/JWT_SECRET en sync:false -> se agregan manualmente en el dashboard (no van al repo).
-#   - Wasp build genera los estáticos del cliente en .wasp/build/web-app/build.
+# Wasp 0.24 + Prisma + Supabase Postgres. Despliegue en Render.
+# Servicios: 1 API (server) + 1 cliente estático. DB externa = Supabase.
 
 services:
   # ── API / Servidor Wasp ──────────────────────────────────────────────
   - type: web
     name: imprenta-server
-    env: node
+    runtime: node
     plan: free
     branch: main
-    buildCommand: bash build.sh
-    startCommand: bash server-start.sh
-    healthCheckPath: /
+    buildCommand: >-
+      npm install -g @wasp.sh/wasp-cli@0.24 &&
+      export PATH="$(npm prefix -g)/bin:$PATH" &&
+      wasp install &&
+      wasp build &&
+      cd .wasp/out/server &&
+      npm install &&
+      npx prisma generate --schema=../db/schema.prisma &&
+      npm run bundle
+    startCommand: cd .wasp/out/server && npm run start-production
     envVars:
       - key: NODE_VERSION
-        value: "24.14.1"
+        value: "24"
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET
@@ -32,12 +34,23 @@ services:
   # ── Cliente (React/Vite estático) ────────────────────────────────────
   - type: web
     name: imprenta-client
-    env: static
+    runtime: static
     branch: main
-    buildCommand: bash build.sh
-    staticPublishPath: .wasp/build/web-app/build
+    buildCommand: >-
+      npm install -g @wasp.sh/wasp-cli@0.24 &&
+      export PATH="$(npm prefix -g)/bin:$PATH" &&
+      wasp install &&
+      wasp build &&
+      cd .wasp/out/web-app &&
+      npm install &&
+      npm run build
+    staticPublishPath: .wasp/out/web-app/build
     envVars:
       - key: NODE_VERSION
-        value: "24.14.1"
+        value: "24"
       - key: REACT_APP_API_URL
-        value: "https://imprenta-server.onrender.com"
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /200.html

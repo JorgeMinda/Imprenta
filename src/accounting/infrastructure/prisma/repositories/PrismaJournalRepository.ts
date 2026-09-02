@@ -7,7 +7,7 @@ export class PrismaJournalRepository implements JournalRepository {
   async save(draft: JournalEntryDraft): Promise<{ id: string }> {
     const created = await this.delegate.create({
       data: {
-        date: draft.date,
+        date: new Date(draft.date),
         concept: draft.concept,
         reference: draft.reference,
         sourceType: draft.sourceType,
@@ -16,8 +16,8 @@ export class PrismaJournalRepository implements JournalRepository {
         lines: {
           create: draft.lines.map((line) => ({
             accountId: line.accountId,
-            debitCents: line.debit.amountCents.toString(),
-            creditCents: line.credit.amountCents.toString(),
+            debitCents: BigInt(line.debitCents),
+            creditCents: BigInt(line.creditCents),
             description: line.description,
           })),
         },

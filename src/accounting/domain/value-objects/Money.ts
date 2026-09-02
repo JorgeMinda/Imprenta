@@ -14,7 +14,7 @@ export class Money {
     return new Money(0n, currency);
   }
 
-  static fromCents(cents: bigint | number, currency: Currency = 'USD'): Money {
+  static fromCents(cents: bigint | number | string, currency: Currency = 'USD'): Money {
     return new Money(BigInt(cents), currency);
   }
 
@@ -52,6 +52,10 @@ export class Money {
   toString(): string {
     const value = (Number(this.amountCents) / 100).toFixed(2);
     return `${this.currency} ${value}`;
+  }
+
+  toJSON(): { amountCents: string; currency: Currency } {
+    return { amountCents: this.amountCents.toString(), currency: this.currency };
   }
 
   private assertSameCurrency(other: Money): void {

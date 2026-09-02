@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16
+    image: postgres:18
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -25,13 +25,14 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/contabilidad
       JWT_SECRET: cambio_este_texto_por_otro_aleatorio
+      WASP_SERVER_URL: http://localhost:3001
+      WASP_WEB_CLIENT_URL: http://localhost:3000
     ports:
-      - "3000:3000" # Cliente (Vite)
-      - "3001:3001" # Servidor Wasp
+      - "3000:3000"
+      - "3001:3001"
     depends_on:
       db:
         condition: service_healthy
-    command: ["wasp", "start", "--no-dependent-start"]
 
 volumes:
   pgdata:

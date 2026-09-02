@@ -7,6 +7,30 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ── Auth (Wasp + Supabase) ──────────────────────────────────────────
+
+model Auth {
+  id           String    @id @default(uuid())
+  email        String?   @unique
+  username     String?   @unique
+  password     String?
+  userId       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  expiresIn Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ── App Models ───────────────────────────────────────────────────────
+
 enum UserRole {
   ADMIN
   CONTADOR
@@ -20,6 +44,8 @@ model User {
   name      String?
   role      UserRole @default(CONTADOR)
   createdAt DateTime @default(now())
+  auth      Auth?
+  sessions  Session[]
 }
 
 enum AccountType {
@@ -53,7 +79,7 @@ enum SourceType {
 
 model Account {
   id          String       @id @default(uuid())
-  code        String       @unique // "1.1.01.01" (catálogo SRI)
+  code        String       @unique
   name        String
   type        AccountType
   naturalSign NaturalSign
@@ -70,7 +96,7 @@ model Account {
 
 model FiscalPeriod {
   id        String         @id @default(uuid())
-  label     String         // "2026-01"
+  label     String
   startDate DateTime       @map("start_date")
   endDate   DateTime       @map("end_date")
   closed    Boolean        @default(false)
@@ -80,15 +106,15 @@ model FiscalPeriod {
 }
 
 model JournalEntry {
-  id         String      @id @default(uuid())
-  date       DateTime    @db.Date
+  id         String       @id @default(uuid())
+  date       DateTime     @db.Date
   concept    String
   reference  String?
   sourceType SourceType
-  periodId   String      @map("period_id")
-  status     EntryStatus @default(POSTED)
-  createdBy  String      @map("created_by")
-  createdAt  DateTime    @default(now())
+  periodId   String       @map("period_id")
+  status     EntryStatus  @default(POSTED)
+  createdBy  String       @map("created_by")
+  createdAt  DateTime     @default(now())
   period     FiscalPeriod @relation(fields: [periodId], references: [id])
   lines      JournalLine[]
 

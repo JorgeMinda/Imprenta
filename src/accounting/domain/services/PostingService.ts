@@ -1,5 +1,5 @@
 import { Money } from '../value-objects/Money';
-import { JournalLine } from '../entities/JournalEntry';
+import { JournalLineDraft, toMoney } from '../entities/JournalEntry';
 
 export class DoubleEntryViolation extends Error {
   constructor(message: string) {
@@ -11,7 +11,7 @@ export class DoubleEntryViolation extends Error {
 export class PostingService {
   static readonly MIN_LINES = 2;
 
-  static validateDoubleEntry(lines: JournalLine[]): void {
+  static validateDoubleEntry(lines: JournalLineDraft[]): void {
     if (lines.length < PostingService.MIN_LINES) {
       throw new DoubleEntryViolation(
         `Un asiento requiere al menos ${PostingService.MIN_LINES} líneas.`,
@@ -22,14 +22,15 @@ export class PostingService {
     let totalCredit = Money.zero();
 
     for (const line of lines) {
-      if (line.debit.isZero() && line.credit.isZero()) {
+      const { debit, credit } = toMoney(line);
+      if (debit.isZero() && credit.isZero()) {
         throw new DoubleEntryViolation('Una línea no puede tener débito y crédito en cero.');
       }
-      if (!line.debit.isZero() && !line.credit.isZero()) {
+      if (!debit.isZero() && !credit.isZero()) {
         throw new DoubleEntryViolation('Una línea no puede tener débito y crédito a la vez.');
       }
-      totalDebit = totalDebit.add(line.debit);
-      totalCredit = totalCredit.add(line.credit);
+      totalDebit = totalDebit.add(debit);
+      totalCredit = totalCredit.add(credit);
     }
 
     if (!totalDebit.equals(totalCredit)) {
