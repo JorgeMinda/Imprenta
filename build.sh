@@ -9,5 +9,5 @@ wasp install
 wasp build
 cd .wasp/out/server
 npm install
-npx prisma generate
+npx prisma generate --schema=../db/schema.prisma
 npm run bundle
