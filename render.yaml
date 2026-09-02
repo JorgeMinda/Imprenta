@@ -43,10 +43,7 @@ services:
       npm install -g @wasp.sh/wasp-cli@0.24 &&
       wasp install &&
       wasp build &&
-      cd .wasp/out/web-app &&
-      npm install &&
-      npm run build &&
-      cd ../../.. &&
+      npx vite build &&
       mkdir -p .wasp/build/web-app &&
       cp -r .wasp/out/web-app/build .wasp/build/web-app/
     staticPublishPath: .wasp/out/web-app/build

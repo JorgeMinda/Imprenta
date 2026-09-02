@@ -12,13 +12,10 @@ npm install
 npx prisma generate --schema=../db/schema.prisma
 npm run bundle
 
-# Construir cliente React/Vite
+# Construir cliente React/Vite desde la raíz
 cd "$SCRIPT_DIR"
-cd .wasp/out/web-app
-npm install
-npm run build
+npx vite build
 
 # Copiar estáticos para que existan tanto en .wasp/out como en .wasp/build
-cd "$SCRIPT_DIR"
 mkdir -p .wasp/build/web-app
 cp -r .wasp/out/web-app/build .wasp/build/web-app/
