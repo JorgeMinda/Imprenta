@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout } from '../components/Layout';
+import { Layout } from './components/Layout';
 
 const statsCardStyle: React.CSSProperties = {
   border: '1px solid #e5e7eb',
