@@ -45,7 +45,10 @@ services:
       wasp build &&
       cd .wasp/out/web-app &&
       npm install &&
-      npm run build
+      npm run build &&
+      cd ../../.. &&
+      mkdir -p .wasp/build/web-app &&
+      cp -r .wasp/out/web-app/build .wasp/build/web-app/
     staticPublishPath: .wasp/out/web-app/build
     envVars:
       - key: NODE_VERSION
