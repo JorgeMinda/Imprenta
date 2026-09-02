@@ -3,6 +3,7 @@ import { Dashboard } from "./src/MainPage" with { type: "ref" };
 import { AccountsPage } from "./src/pages/AccountsPage" with { type: "ref" };
 import { NewJournalEntryPage } from "./src/pages/NewJournalEntryPage" with { type: "ref" };
 import { LoginPage } from "./src/pages/LoginPage" with { type: "ref" };
+import { SignupPage } from "./src/pages/SignupPage" with { type: "ref" };
 import { getAccounts } from "./src/operations/accounts" with { type: "ref" };
 import { getAccountTree } from "./src/operations/accounts" with { type: "ref" };
 import { getJournalEntries } from "./src/operations/journal" with { type: "ref" };
@@ -24,6 +25,7 @@ export default app({
   spec: [
     route("DashboardRoute", "/", page(Dashboard)),
     route("LoginRoute", "/login", page(LoginPage)),
+    route("SignupRoute", "/signup", page(SignupPage)),
     route("AccountsRoute", "/accounts", page(AccountsPage)),
     route("NewJournalEntryRoute", "/journal/new", page(NewJournalEntryPage)),
 
