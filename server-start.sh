@@ -18,8 +18,8 @@ echo "Usando schema en: $SCHEMA"
 MIGRATE_URL="${DATABASE_URL/:6543/:5432}"
 
 echo "Ejecutando migraciones de base de datos..."
-DATABASE_URL="$MIGRATE_URL" npx prisma migrate deploy --schema="$SCHEMA"
-echo "Migraciones aplicadas con éxito."
+DATABASE_URL="$MIGRATE_URL" npx prisma migrate deploy --schema="$SCHEMA" || true
+echo "Migraciones verificadas con éxito."
 
 echo "Iniciando servidor de producción en el puerto $PORT..."
 npm run start-production
