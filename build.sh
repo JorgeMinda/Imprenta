@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
-export PATH="$(npm prefix -g)/bin:$PATH"
+npm config set prefix ~/npm-global
+export PATH="$HOME/npm-global/bin:$PATH"
 npm install -g @wasp.sh/wasp-cli@0.24
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 cd "$SCRIPT_DIR"

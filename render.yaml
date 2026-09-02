@@ -10,8 +10,9 @@ services:
     plan: free
     branch: main
     buildCommand: >-
+      npm config set prefix ~/npm-global &&
+      export PATH="$HOME/npm-global/bin:$PATH" &&
       npm install -g @wasp.sh/wasp-cli@0.24 &&
-      export PATH="$(npm prefix -g)/bin:$PATH" &&
       wasp install &&
       wasp build &&
       cd .wasp/out/server &&
@@ -37,8 +38,9 @@ services:
     runtime: static
     branch: main
     buildCommand: >-
+      npm config set prefix ~/npm-global &&
+      export PATH="$HOME/npm-global/bin:$PATH" &&
       npm install -g @wasp.sh/wasp-cli@0.24 &&
-      export PATH="$(npm prefix -g)/bin:$PATH" &&
       wasp install &&
       wasp build &&
       cd .wasp/out/web-app &&
