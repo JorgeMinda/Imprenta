@@ -44,7 +44,11 @@ services:
       export PATH="$HOME/npm-global/bin:$PATH" &&
       npm install -g @wasp.sh/wasp-cli@0.24 &&
       wasp install &&
-      wasp build
+      wasp build &&
+      npx vite build &&
+      cp .wasp/out/web-app/build/200.html .wasp/out/web-app/build/index.html 2>/dev/null || true &&
+      mkdir -p .wasp/build/web-app &&
+      cp -r .wasp/out/web-app/build .wasp/build/web-app/
     staticPublishPath: .wasp/out/web-app/build
     envVars:
       - key: NODE_VERSION

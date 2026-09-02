@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router';
 import { signup } from 'wasp/client/auth';
 import { Layout } from '../components/Layout';
 
@@ -73,7 +72,7 @@ export const SignupPage: React.FC = () => {
         </form>
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b7280' }}>
           ¿Ya tienes cuenta?{' '}
-          <Link to="/login" style={{ color: '#2563eb', textDecoration: 'none' }}>Inicia sesión</Link>
+          <a href="/login" style={{ color: '#2563eb', textDecoration: 'none' }}>Inicia sesión</a>
         </p>
       </div>
     </Layout>

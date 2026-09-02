@@ -8,5 +8,6 @@ cd "$SCRIPT_DIR"
 wasp install
 wasp build
 npx vite build
+cp .wasp/out/web-app/build/200.html .wasp/out/web-app/build/index.html 2>/dev/null || true
 mkdir -p .wasp/build/web-app
 cp -r .wasp/out/web-app/build .wasp/build/web-app/
