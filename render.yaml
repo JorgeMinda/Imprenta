@@ -17,7 +17,7 @@ services:
       wasp build &&
       cd .wasp/out/server &&
       npm install &&
-      npx prisma generate --schema=../db/schema.prisma &&
+      npx prisma generate &&
       npm run bundle
     startCommand: cd .wasp/out/server && npm run start-production
     envVars:
@@ -31,6 +31,8 @@ services:
         value: "https://imprenta-server.onrender.com"
       - key: WASP_WEB_CLIENT_URL
         value: "https://imprenta-client.onrender.com"
+      - key: REACT_APP_API_URL
+        value: "https://imprenta-server.onrender.com"
 
   # ── Cliente (React/Vite estático) ────────────────────────────────────
   - type: web
@@ -42,16 +44,13 @@ services:
       export PATH="$HOME/npm-global/bin:$PATH" &&
       npm install -g @wasp.sh/wasp-cli@0.24 &&
       wasp install &&
-      wasp build &&
-      npx vite build &&
-      mkdir -p .wasp/build/web-app &&
-      cp -r .wasp/out/web-app/build .wasp/build/web-app/
+      wasp build
     staticPublishPath: .wasp/out/web-app/build
     envVars:
       - key: NODE_VERSION
         value: "24"
       - key: REACT_APP_API_URL
-        sync: false
+        value: "https://imprenta-server.onrender.com"
     routes:
       - type: rewrite
         source: /*
